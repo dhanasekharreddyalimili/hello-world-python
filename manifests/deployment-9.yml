@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "myask-caf7"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "myask-caf7"
+  template:
+    metadata:
+      labels:
+        app: "myask-caf7"
+    spec:
+      containers:
+        - name: "myask-caf7"
+          image: "myacr2025.azurecr.io/myask"
+          ports:
+          - containerPort: 8080
