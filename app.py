@@ -14,7 +14,7 @@ def elapsed():
 
 @app.route('/')
 def root():
-    return "Welcome to AKS which intraduced by Microsoft in the year 2018.which will automate all container-images.... (Python)! (up %s)\n" % elapsed()
+    return "Welcome to AKS which was intraduced by Microsoft....Welcome to python application.... (Python)! (up %s)\n" % elapsed()
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
