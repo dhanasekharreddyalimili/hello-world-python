@@ -14,7 +14,7 @@ def elapsed():
 
 @app.route('/')
 def root():
-    return "Welcome to AKS which was intraduced by Microsoft....Welcome to python application.... (Python)! (up %s)\n" % elapsed()
+    return "Welcome to Microsoft Azure Cloud Computing...Welcome to 2023.... (Python)! (up %s)\n" % elapsed()
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8080)
