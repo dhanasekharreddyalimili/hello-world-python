@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: myacr202212.azurecr.io
+        username: ${{ secrets.acr_myacr202212_username }}
+        password: ${{ secrets.acr_myacr202212_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t myacr202212.azurecr.io/myakscluster:${{ github.sha }} --label dockerfile-path=Dockerfile
+        docker push myacr202212.azurecr.io/myakscluster:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_myakscluster_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep myaks-clusteracd5-py2023 | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace myaks-clusteracd5-py2023`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: myaks-clusteracd5-py2023
+        container-registry-url: myacr202212.azurecr.io
+        container-registry-username: ${{ secrets.acr_myacr202212_username }}
+        container-registry-password: ${{ secrets.acr_myacr202212_password }}
+        secret-name: myaksclusterdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: myaks-clusteracd5-py2023
+        manifests: |
+          manifests/deployment-13.yml
+          manifests/service-13.yml
+        images: |
+          myacr202212.azurecr.io/myakscluster:${{ github.sha }}
+        imagepullsecrets: |
+          myaksclusterdockerauth
