@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ts
+  labels:
+    app: ts
+  namespace: namespace-workflow-1685935898903
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ts
+  template:
+    metadata:
+      labels:
+        app: ts
+    spec:
+      containers:
+        - name: ts
+          image: acrworkflow1685935898903.azurecr.io/image-workflow-1685935898903:latest
+          ports:
+            - containerPort: 8000
